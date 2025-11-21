@@ -9,20 +9,35 @@ dotenv.config()
 
 const app = express()
 
-const hbs = require('express-handlebars')
+const handlebars = require('express-handlebars')
+// =======================================================================
+const hbs = handlebars.create({
+  extname: 'hbs',
+  defaultLayout: 'default',
+  layoutsDir: __dirname + '/src/layout/',
+  partialsDir: __dirname + '/src/component/',
+})
 
+hbs.handlebars.registerHelper('isObject', function (value) {
+  return typeof value === 'object' && value !== null
+})
+
+hbs.handlebars.registerHelper('eq', function (a, b) {
+  return a === b
+})
+
+hbs.handlebars.registerHelper('isArray', function (value) {
+  return Array.isArray(value)
+})
+
+hbs.handlebars.registerHelper('concat', function (a, b) {
+  return a + b
+})
+
+app.engine('hbs', hbs.engine)
 app.set('view engine', 'hbs')
 app.set('views', 'src/container')
-app.engine(
-  'hbs',
-  hbs.engine({
-    extname: 'hbs',
-    defaultLayout: 'default',
-    layoutsDir: __dirname + '/src/layout/',
-    partialsDir: __dirname + '/src/component/',
-  }),
-)
-
+// =======================================================================
 app.use(logger('dev'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
